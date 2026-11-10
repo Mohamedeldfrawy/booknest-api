@@ -1,5 +1,33 @@
 import { toPublicBook } from "./book.mapper.js";
-import { createBook, deleteBook, updateBook } from "./book.service.js";
+import { toPublicBrowseBook } from "./book.mapper.js";
+import {
+  browseBooks,
+  createBook,
+  deleteBook,
+  getBook,
+  updateBook,
+} from "./book.service.js";
+
+const listBooksController = async (req, res) => {
+  const { books, pagination } = await browseBooks(res.locals.validatedQuery);
+
+  return res.status(200).json({
+    status: "success",
+    data: books.map(toPublicBrowseBook),
+    pagination,
+  });
+};
+
+const getBookController = async (req, res) => {
+  const book = await getBook(req.params.id);
+
+  return res.status(200).json({
+    status: "success",
+    data: {
+      book: toPublicBrowseBook(book),
+    },
+  });
+};
 
 const createBookController = async (req, res) => {
   const book = await createBook(req.body);
@@ -35,5 +63,7 @@ const deleteBookController = async (req, res) => {
 export {
   createBookController,
   deleteBookController,
+  getBookController,
+  listBooksController,
   updateBookController,
 };

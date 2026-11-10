@@ -5,10 +5,13 @@ import validate from "../../middleware/validate.js";
 import {
   createBookController,
   deleteBookController,
+  getBookController,
+  listBooksController,
   updateBookController,
 } from "./book.controller.js";
 import {
   bookIdSchema,
+  browseBooksQuerySchema,
   createBookSchema,
   updateBookSchema,
 } from "./book.validation.js";
@@ -16,6 +19,16 @@ import {
 const router = Router();
 const adminOnly = [authenticate, authorize("admin")];
 
+router.get(
+  "/",
+  validate(browseBooksQuerySchema, "query"),
+  listBooksController,
+);
+router.get(
+  "/:id",
+  validate(bookIdSchema, "params"),
+  getBookController,
+);
 router.post(
   "/",
   ...adminOnly,

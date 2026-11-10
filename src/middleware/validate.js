@@ -11,8 +11,12 @@ const validate = (schema, property = "body") => (req, res, next) => {
       new AppError(error.details.map((detail) => detail.message).join(", "), 400, ERROR_CODES.VALIDATION_ERROR),
     );
   }
+  if (property === "query") {
+    res.locals.validatedQuery = value;
+  } else {
+    req[property] = value;
+  }
 
-  req[property] = value;
   return next();
 };
 

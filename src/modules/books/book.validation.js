@@ -43,4 +43,24 @@ const bookIdSchema = Joi.object({
     .required(),
 });
 
-export { bookIdSchema, createBookSchema, updateBookSchema };
+const browseBooksQuerySchema = Joi.object({
+  search: Joi.string().trim().min(1),
+  category: categoryField,
+  minPrice: Joi.number().min(0),
+  maxPrice: Joi.number().min(0),
+  sort: Joi.string().valid(
+    "price_asc",
+    "price_desc",
+    "newest",
+    "oldest",
+  ),
+  page: Joi.number().integer().positive().default(1),
+  limit: Joi.number().integer().positive().max(50).default(10),
+}).unknown(false);
+
+export {
+  bookIdSchema,
+  browseBooksQuerySchema,
+  createBookSchema,
+  updateBookSchema,
+};
