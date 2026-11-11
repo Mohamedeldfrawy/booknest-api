@@ -5,6 +5,7 @@ import {
   countBrowse,
   findActiveById,
   findActiveByIdForBrowse,
+  findByIdsForCart,
   findByNormalizedTitleAndAuthor,
   findByNormalizedTitleAndAuthorExcludingId,
   findBrowsePage,
@@ -140,4 +141,16 @@ const getBook = async (id) => {
   return book;
 };
 
-export { browseBooks, createBook, deleteBook, getBook, updateBook };
+const getActiveBookForCart = (id) => findActiveByIdForBrowse(id);
+
+const getBooksForCart = (ids) => findByIdsForCart(ids);
+
+export {
+  browseBooks,
+  createBook,
+  deleteBook,
+  getActiveBookForCart,
+  getBooksForCart,
+  getBook,
+  updateBook,
+};

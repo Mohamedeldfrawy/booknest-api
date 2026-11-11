@@ -83,6 +83,8 @@ const softDeleteById = (id) =>
 const findActiveByIdForBrowse = (id) =>
   Book.findOne({ _id: id, isDeleted: false });
 
+const findByIdsForCart = (ids) => Book.find({ _id: { $in: ids } });
+
 const countBrowse = (query) => Book.countDocuments(buildBrowseFilter(query));
 
 const findBrowsePage = ({ page, limit, ...query }) =>
@@ -96,6 +98,7 @@ export {
   create,
   findActiveById,
   findActiveByIdForBrowse,
+  findByIdsForCart,
   findByNormalizedTitleAndAuthor,
   findByNormalizedTitleAndAuthorExcludingId,
   findBrowsePage,
