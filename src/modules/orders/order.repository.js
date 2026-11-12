@@ -36,11 +36,27 @@ const markCancelledForStockRestoration = (id, session) =>
     { new: true, session },
   );
 
+const markPaidIfPending = (id, userId) =>
+  Order.findOneAndUpdate(
+    {
+      _id: id,
+      userId,
+      status: "pending",
+    },
+    {
+      $set: {
+        status: "paid",
+      },
+    },
+    { new: true },
+  );
+
 export {
   create,
   findAll,
   findById,
   findByIdForUser,
   findByUserId,
+  markPaidIfPending,
   markCancelledForStockRestoration,
 };

@@ -17,6 +17,7 @@ import {
   findByIdForUser,
   findByUserId,
   markCancelledForStockRestoration,
+  markPaidIfPending,
 } from "./order.repository.js";
 
 const checkoutError = (message, code) => new AppError(message, 409, code);
@@ -162,4 +163,45 @@ const cancelOrder = (id) =>
     return cancelledOrder;
   });
 
-export { cancelOrder, checkout, getOrder, listOrders };
+const markOrderPaid = async (id, userId) => {
+  await getOrderForPayment(id, userId);
+
+  const paidOrder = await markPaidIfPending(id, userId);
+
+  if (!paidOrder) {
+    throw new AppError(
+      "Order is no longer eligible for payment",
+      409,
+      ERROR_CODES.ORDER_PAYMENT_CONFLICT,
+    );
+  }
+
+  return paidOrder;
+};
+
+const getOrderForPayment = async (id, userId) => {
+  const order = await findByIdForUser(id, userId);
+
+  if (!order) {
+    throw orderNotFoundError();
+  }
+
+  if (order.status !== "pending") {
+    throw new AppError(
+      "Order is not eligible for payment",
+      409,
+      ERROR_CODES.ORDER_PAYMENT_CONFLICT,
+    );
+  }
+
+  return order;
+};
+
+export {
+  cancelOrder,
+  checkout,
+  getOrder,
+  getOrderForPayment,
+  listOrders,
+  markOrderPaid,
+};
