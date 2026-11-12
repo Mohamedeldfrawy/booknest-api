@@ -7,6 +7,7 @@ import {
 import {
   addItemIfAbsent,
   createCart,
+  deleteByUserId,
   deleteIfEmpty,
   findByUserId,
   incrementItemIfWithinStock,
@@ -94,6 +95,12 @@ const mapCart = async (cart) => {
 };
 
 const getCart = async (userId) => mapCart(await findByUserId(userId));
+
+const getCartForCheckout = (userId, session) =>
+  findByUserId(userId, session);
+
+const clearCartForCheckout = (userId, session) =>
+  deleteByUserId(userId, session);
 
 const addCartItem = async (userId, bookId, quantity) => {
   const book = await getActiveBookForCart(bookId);
@@ -196,4 +203,11 @@ const removeCartItem = async (userId, bookId) => {
   return mapCart(cart);
 };
 
-export { addCartItem, getCart, removeCartItem, updateCartItem };
+export {
+  addCartItem,
+  clearCartForCheckout,
+  getCart,
+  getCartForCheckout,
+  removeCartItem,
+  updateCartItem,
+};

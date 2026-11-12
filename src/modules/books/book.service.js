@@ -5,10 +5,13 @@ import {
   countBrowse,
   findActiveById,
   findActiveByIdForBrowse,
+  findActiveByIdsForCheckout,
   findByIdsForCart,
   findByNormalizedTitleAndAuthor,
   findByNormalizedTitleAndAuthorExcludingId,
   findBrowsePage,
+  decrementStockIfAvailable,
+  restoreStock,
   softDeleteById,
   updateById,
 } from "./book.repository.js";
@@ -145,12 +148,24 @@ const getActiveBookForCart = (id) => findActiveByIdForBrowse(id);
 
 const getBooksForCart = (ids) => findByIdsForCart(ids);
 
+const getActiveBooksForCheckout = (ids, session) =>
+  findActiveByIdsForCheckout(ids, session);
+
+const decrementStockForCheckout = (id, quantity, session) =>
+  decrementStockIfAvailable(id, quantity, session);
+
+const restoreStockForOrder = (id, quantity, session) =>
+  restoreStock(id, quantity, session);
+
 export {
   browseBooks,
   createBook,
   deleteBook,
   getActiveBookForCart,
   getBooksForCart,
+  getActiveBooksForCheckout,
+  decrementStockForCheckout,
+  restoreStockForOrder,
   getBook,
   updateBook,
 };

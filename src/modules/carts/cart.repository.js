@@ -1,6 +1,10 @@
 import Cart from "./cart.model.js";
 
-const findByUserId = (userId) => Cart.findOne({ userId });
+const findByUserId = (userId, session) => {
+  const query = Cart.findOne({ userId });
+
+  return session ? query.session(session) : query;
+};
 
 const createCart = (userId, bookId, quantity) =>
   Cart.create({
@@ -47,9 +51,16 @@ const removeItem = (userId, bookId) =>
 const deleteIfEmpty = (userId) =>
   Cart.deleteOne({ userId, items: { $size: 0 } });
 
+const deleteByUserId = (userId, session) => {
+  const query = Cart.deleteOne({ userId });
+
+  return session ? query.session(session) : query;
+};
+
 export {
   createCart,
   addItemIfAbsent,
+  deleteByUserId,
   deleteIfEmpty,
   findByUserId,
   incrementItemIfWithinStock,

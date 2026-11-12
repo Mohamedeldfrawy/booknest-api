@@ -85,6 +85,33 @@ const findActiveByIdForBrowse = (id) =>
 
 const findByIdsForCart = (ids) => Book.find({ _id: { $in: ids } });
 
+const findActiveByIdsForCheckout = (ids, session) => {
+  const query = Book.find({
+    _id: { $in: ids },
+    isDeleted: false,
+  });
+
+  return session ? query.session(session) : query;
+};
+
+const decrementStockIfAvailable = (id, quantity, session) =>
+  Book.findOneAndUpdate(
+    {
+      _id: id,
+      isDeleted: false,
+      stock: { $gte: quantity },
+    },
+    { $inc: { stock: -quantity } },
+    { new: true, runValidators: true, session },
+  );
+
+const restoreStock = (id, quantity, session) =>
+  Book.updateOne(
+    { _id: id },
+    { $inc: { stock: quantity } },
+    { session },
+  );
+
 const countBrowse = (query) => Book.countDocuments(buildBrowseFilter(query));
 
 const findBrowsePage = ({ page, limit, ...query }) =>
@@ -98,10 +125,13 @@ export {
   create,
   findActiveById,
   findActiveByIdForBrowse,
+  findActiveByIdsForCheckout,
   findByIdsForCart,
   findByNormalizedTitleAndAuthor,
   findByNormalizedTitleAndAuthorExcludingId,
   findBrowsePage,
+  decrementStockIfAvailable,
+  restoreStock,
   softDeleteById,
   updateById,
 };
